@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace WolfpackIT\adminLte\bundles\adminLteSource;
 
-use yii\bootstrap4\BootstrapAsset;
-use yii\bootstrap4\BootstrapPluginAsset;
+use yii\bootstrap5\BootstrapAsset;
+use yii\bootstrap5\BootstrapPluginAsset;
 use yii\web\AssetBundle;
 use yii\web\YiiAsset;
 

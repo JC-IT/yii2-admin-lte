@@ -107,9 +107,9 @@ class SideNavBar extends Widget
     {
         parent::init();
         if (!isset($this->options['class']) || empty($this->options['class'])) {
-            Html::addCssClass($this->options, ['widget' => 'main-sidebar', 'sidebar-dark-primary', 'elevation-4']);
+            Html::addCssClass($this->options, ['widget' => 'app-sidebar', 'bg-dark', 'shadow']);
         } else {
-            Html::addCssClass($this->options, ['widget' => 'main-sidebar']);
+            Html::addCssClass($this->options, ['widget' => 'app-sidebar']);
         }
         $navOptions = $this->options;
         $navTag = ArrayHelper::remove($navOptions, 'tag', 'aside') . "\n";
@@ -142,7 +142,7 @@ class SideNavBar extends Widget
 
         echo Html::beginTag($navTag, $navOptions) . "\n";
         echo $brand . "\n";
-        echo Html::beginTag('div', ['class' => ['sidebar']]) . "\n";
+        echo Html::beginTag('div', ['class' => ['sidebar-wrapper']]) . "\n";
     }
 
     /**
