@@ -106,12 +106,16 @@ class SideNavBar extends Widget
     public function init()
     {
         parent::init();
-        if (!isset($this->options['class']) || empty($this->options['class'])) {
-            Html::addCssClass($this->options, ['widget' => 'app-sidebar', 'bg-dark', 'shadow']);
-        } else {
-            Html::addCssClass($this->options, ['widget' => 'app-sidebar']);
-        }
         $navOptions = $this->options;
+        if (empty($navOptions['class'])) {
+            Html::addCssClass($navOptions, ['widget' => 'app-sidebar', 'bg-dark', 'shadow']);
+        } else {
+            Html::addCssClass($navOptions, ['widget' => 'app-sidebar']);
+        }
+        if (empty($navOptions['data']['bs-theme'])) {
+            $navOptions['data']['bs-theme'] = 'dark';
+        }
+
         $navTag = ArrayHelper::remove($navOptions, 'tag', 'aside') . "\n";
 
         if (isset($this->brand)) {
@@ -119,29 +123,33 @@ class SideNavBar extends Widget
         } else {
             $brand = '';
             if ($this->brandImage !== false) {
-                $this->brandLabel = Html::img($this->brandImage, $this->brandImageOptions) . "\n";
+                $brandImageOptions = $this->brandImageOptions;
+                Html::addCssClass($brandImageOptions, ['widget' => 'brand-image']);
+                $this->brandLabel = Html::img($this->brandImage, $brandImageOptions) . "\n";
             }
             if ($this->brandLabel !== false) {
-                Html::addCssClass($this->brandTextOptions, ['widget' => 'brand-text']);
-                Html::addCssClass($this->brandLinkOptions, ['widget' => 'brand-link']);
+                $brandTextOptions = $this->brandTextOptions;
+                Html::addCssClass($brandTextOptions, ['widget' => 'brand-text']);
+                $brandLinkOptions = $this->brandLinkOptions;
+                Html::addCssClass($brandLinkOptions, ['widget' => 'brand-link']);
                 if ($this->brandUrl === null) {
                     $brand = Html::a(
-                        Html::tag('span', $this->brandLabel, $this->brandTextOptions),
+                        Html::tag('span', $this->brandLabel, $brandTextOptions),
                         '#',
-                        $this->brandLinkOptions
+                        $brandLinkOptions
                     );
                 } else {
                     $brand = Html::a(
-                        Html::tag('span', $this->brandLabel, $this->brandTextOptions),
+                        Html::tag('span', $this->brandLabel, $brandTextOptions),
                         $this->brandUrl === false ? \Yii::$app->homeUrl : $this->brandUrl,
-                        $this->brandLinkOptions
+                        $brandLinkOptions
                     );
                 }
             }
         }
 
         echo Html::beginTag($navTag, $navOptions) . "\n";
-        echo $brand . "\n";
+        echo !empty($brand) ? Html::tag('div', $brand, ['class' => ['sidebar-brand']]) . "\n" : '';
         echo Html::beginTag('div', ['class' => ['sidebar-wrapper']]) . "\n";
     }
 
@@ -151,7 +159,8 @@ class SideNavBar extends Widget
     public function run()
     {
         echo Html::endTag('div') . "\n";
-        $navTag = ArrayHelper::remove($this->options, 'tag', 'aside');
+        $navOptions = $this->options;
+        $navTag = ArrayHelper::remove($navOptions, 'tag', 'aside');
         echo Html::endTag($navTag) . "\n";
         AdminLteBundle::register($this->getView());
     }

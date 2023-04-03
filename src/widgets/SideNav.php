@@ -1,52 +1,24 @@
 <?php
 
+declare(strict_types=1);
+
 namespace WolfpackIT\adminLte\widgets;
 
 use kartik\icons\Icon;
 use WolfpackIT\adminLte\bundles\AdminLteBundle;
 use yii\base\InvalidConfigException;
-use yii\bootstrap4\Html;
-use yii\bootstrap4\Nav;
+use yii\bootstrap5\Html;
+use yii\bootstrap5\Nav;
 use yii\helpers\ArrayHelper;
 
-/**
- * Class SideNav
- * @package common\themes\AdminLte\widgets
- */
 class SideNav extends Nav
 {
-    /**
-     * @var string
-     */
     public $dropdownClass = self::class;
+    public array $iconOptions = [];
+    public bool $isSubMenu = false;
+    public array $navOptions = [];
 
-    /**
-     * @var array
-     */
-    public $iconOptions = [];
-
-    /**
-     * @var bool
-     */
-    public $isSubMenu = false;
-
-    /**
-     * @var array
-     */
-    public $navOptions = [
-        'class' => ['mt-2']
-    ];
-
-    /**
-     * @var string
-     */
-    public $navType = 'nav-pills';
-
-    /**
-     * @param $items
-     * @return bool
-     */
-    protected function hasActiveChild($items): bool
+    protected function hasActiveChild(array $items): bool
     {
         foreach ($items as $i => $child) {
             if (is_array($child) && !ArrayHelper::getValue($child, 'visible', true)) {
@@ -68,18 +40,18 @@ class SideNav extends Nav
         return false;
     }
 
-    public function init()
+    public function init(): void
     {
         parent::init();
 
-        Html::addCssClass($this->options, ['nav-sidebar', 'flex-column', $this->navType]);
-        $this->options['data-widget'] = 'treeview';
+        Html::addCssClass($this->options, ['sidebar-menu', 'flex-column']);
+        $this->options['data-lte-toggle'] = 'treeview';
+        $this->options['role'] = 'menu';
+        $this->options['data-accordion'] = 'false';
     }
 
     /**
      * @param array|string $item
-     * @return array|string
-     * @throws InvalidConfigException
      */
     public function renderItem($item): string
     {
@@ -113,7 +85,7 @@ class SideNav extends Nav
             $showSubmenu = '';
         } else {
             Html::addCssClass($options, ['has-treeview']);
-            $showSubmenu = Icon::show('angle-left', ['class' => 'right']);
+            $showSubmenu = Icon::show('angle-left', ['class' => 'nav-treeview-status-icon']);
 
             $dropdownOptions = ArrayHelper::getValue($item, 'dropdownOptions', []);
             Html::addCssClass($dropdownOptions, ['nav-treeview']);
@@ -143,15 +115,7 @@ class SideNav extends Nav
         return Html::tag('li', Html::a($iconHtml . Html::tag('p', $label  . $showSubmenu), $url, $linkOptions) . $subMenu, $options);
     }
 
-    /**
-     * Renders the given items as a dropdown.
-     * This method is called to create sub-menus.
-     * @param array $items the given items. Please refer to [[Dropdown::items]] for the array structure.
-     * @param array $parentItem the parent item information. Please refer to [[items]] for the structure of this array.
-     * @return string the rendering result.
-     * @throws \Exception
-     */
-    protected function renderDropdown($items, $parentItem)
+    protected function renderDropdown(array $items, array $parentItem): string
     {
         /** @var self $dropdownClass */
         $dropdownClass = $this->dropdownClass;
@@ -165,23 +129,17 @@ class SideNav extends Nav
         ]);
     }
 
-    /**
-     * @return string
-     * @throws InvalidConfigException
-     */
     public function renderItems(): string
     {
-        $result = (!$this->isSubMenu ? Html::beginTag('nav', ['class' => 'mt-2']) : '') . "\n";
+        $result = (!$this->isSubMenu ? Html::beginTag('nav') : '') . "\n";
         $result .= parent::renderItems();
         $result .= (!$this->isSubMenu ? Html::endTag('nav') : '') . "\n";
         return $result;
     }
 
-    public function run()
+    public function run(): string
     {
         AdminLteBundle::register($this->getView());
         return parent::run();
     }
-
-
 }
