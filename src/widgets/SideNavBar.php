@@ -3,10 +3,11 @@
 namespace WolfpackIT\adminLte\widgets;
 
 use WolfpackIT\adminLte\bundles\AdminLteBundle;
-use yii\bootstrap4\BootstrapPluginAsset;
-use yii\bootstrap4\Html;
-use yii\bootstrap4\Widget;
+use yii\bootstrap5\BootstrapPluginAsset;
+use yii\bootstrap5\Html;
+use yii\bootstrap5\Widget;
 use yii\helpers\ArrayHelper;
+use yii\helpers\Url;
 
 /**
  * SideNavBar renders a navbar HTML component.
@@ -68,6 +69,7 @@ class SideNavBar extends Widget
      * @since 2.0.8
      */
     public $brandImage = false;
+    public $brandImageCustom = false;
 
     /**
      * @var array|string|bool $url the URL for the brand's hyperlink tag. This parameter will be processed by [[\yii\helpers\Url::to()]]
@@ -107,9 +109,9 @@ class SideNavBar extends Widget
     {
         parent::init();
         if (!isset($this->options['class']) || empty($this->options['class'])) {
-            Html::addCssClass($this->options, ['widget' => 'main-sidebar', 'sidebar-dark-primary', 'elevation-4']);
+            Html::addCssClass($this->options, ['widget' => 'app-sidebar', 'bg-primary', 'shadow']);
         } else {
-            Html::addCssClass($this->options, ['widget' => 'main-sidebar']);
+            Html::addCssClass($this->options, ['widget' => 'app-sidebar']);
         }
         $navOptions = $this->options;
         $navTag = ArrayHelper::remove($navOptions, 'tag', 'aside') . "\n";
@@ -118,31 +120,29 @@ class SideNavBar extends Widget
             $brand = $this->brand;
         } else {
             $brand = '';
-            if ($this->brandImage !== false) {
-                $this->brandLabel = Html::img($this->brandImage, $this->brandImageOptions) . "\n";
+            $brandUrl = $this->brandUrl !== false ? Url::to($this->brandUrl ?? \Yii::$app->homeUrl) : '#';
+            $brandLinkOptions = $this->brandLinkOptions;
+            Html::addCssClass($brandLinkOptions, 'brand-link');
+            $brand .= Html::beginTag('a', ArrayHelper::merge(['href' => $brandUrl], $brandLinkOptions));
+
+            if (!empty($this->brandImageCustom)) {
+                $brand .= $this->brandImageCustom;
+            } elseif ($this->brandImage !== false) {
+                $brandImageOptions = $this->brandImageOptions;
+                Html::addCssClass($brandImageOptions, 'brand-image');
+                $brand .= Html::img($this->brandImage, $brandImageOptions) . "\n";
             }
             if ($this->brandLabel !== false) {
                 Html::addCssClass($this->brandTextOptions, ['widget' => 'brand-text']);
                 Html::addCssClass($this->brandLinkOptions, ['widget' => 'brand-link']);
-                if ($this->brandUrl === null) {
-                    $brand = Html::a(
-                        Html::tag('span', $this->brandLabel, $this->brandTextOptions),
-                        '#',
-                        $this->brandLinkOptions
-                    );
-                } else {
-                    $brand = Html::a(
-                        Html::tag('span', $this->brandLabel, $this->brandTextOptions),
-                        $this->brandUrl === false ? \Yii::$app->homeUrl : $this->brandUrl,
-                        $this->brandLinkOptions
-                    );
-                }
+                $brand .= Html::tag('span', $this->brandLabel, $this->brandTextOptions);
             }
+            $brand .= Html::endTag('a');
         }
 
         echo Html::beginTag($navTag, $navOptions) . "\n";
-        echo $brand . "\n";
-        echo Html::beginTag('div', ['class' => ['sidebar']]) . "\n";
+        echo Html::tag('div', $brand, ['class' => ['sidebar-brand']]) . "\n";
+        echo Html::beginTag('div', ['class' => ['sidebar-wrapper']]) . "\n";
     }
 
     /**

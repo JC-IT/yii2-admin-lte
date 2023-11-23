@@ -5,8 +5,8 @@ namespace WolfpackIT\adminLte\widgets;
 use kartik\icons\Icon;
 use WolfpackIT\adminLte\bundles\AdminLteBundle;
 use yii\base\InvalidConfigException;
-use yii\bootstrap4\Html;
-use yii\bootstrap4\Nav;
+use yii\bootstrap5\Html;
+use yii\bootstrap5\Nav;
 use yii\helpers\ArrayHelper;
 
 /**
@@ -38,11 +38,6 @@ class SideNav extends Nav
     ];
 
     /**
-     * @var string
-     */
-    public $navType = 'nav-pills';
-
-    /**
      * @param $items
      * @return bool
      */
@@ -72,8 +67,8 @@ class SideNav extends Nav
     {
         parent::init();
 
-        Html::addCssClass($this->options, ['nav-sidebar', 'flex-column', $this->navType]);
-        $this->options['data-widget'] = 'treeview';
+        Html::addCssClass($this->options, ['sidebar-menu', 'flex-column']);
+        $this->options['data-lte-toggle'] = 'treeview';
     }
 
     /**
@@ -100,7 +95,6 @@ class SideNav extends Nav
 
         $iconOptions = ArrayHelper::remove($item, 'iconOptions', []);
         $iconOptions = ArrayHelper::merge($this->iconOptions, $iconOptions);
-        Html::addCssClass($iconOptions, 'nav-icon');
         $emptyIconOptions = ['style' => ['color' => 'transparent']];
         $iconHtml = ArrayHelper::getValue($item, 'iconHtml');
         if (empty($iconHtml)) {
@@ -108,12 +102,12 @@ class SideNav extends Nav
                 ? Icon::show($item['icon'], $iconOptions)
                 : Icon::show('circle', ArrayHelper::merge($iconOptions, $emptyIconOptions));
         }
+        $iconHtml = Html::tag('div', $iconHtml, ['class' => ['nav-icon']]);
         if (empty($items)) {
             $subMenu = '';
             $showSubmenu = '';
         } else {
-            Html::addCssClass($options, ['has-treeview']);
-            $showSubmenu = Icon::show('angle-left', ['class' => 'right']);
+            $showSubmenu = Icon::show('angle-right', ['class' => 'nav-arrow']);
 
             $dropdownOptions = ArrayHelper::getValue($item, 'dropdownOptions', []);
             Html::addCssClass($dropdownOptions, ['nav-treeview']);
@@ -151,7 +145,7 @@ class SideNav extends Nav
      * @return string the rendering result.
      * @throws \Exception
      */
-    protected function renderDropdown($items, $parentItem)
+    protected function renderDropdown($items, $parentItem): string
     {
         /** @var self $dropdownClass */
         $dropdownClass = $this->dropdownClass;
@@ -177,11 +171,9 @@ class SideNav extends Nav
         return $result;
     }
 
-    public function run()
+    public function run(): string
     {
         AdminLteBundle::register($this->getView());
         return parent::run();
     }
-
-
 }
