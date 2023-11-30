@@ -72,7 +72,6 @@ class SideNav extends Nav
 
         $iconOptions = ArrayHelper::remove($item, 'iconOptions', []);
         $iconOptions = ArrayHelper::merge($this->iconOptions, $iconOptions);
-        Html::addCssClass($iconOptions, 'nav-icon');
         $emptyIconOptions = ['style' => ['color' => 'transparent']];
         $iconHtml = ArrayHelper::getValue($item, 'iconHtml');
         if (empty($iconHtml)) {
@@ -80,12 +79,12 @@ class SideNav extends Nav
                 ? Icon::show($item['icon'], $iconOptions)
                 : Icon::show('circle', ArrayHelper::merge($iconOptions, $emptyIconOptions));
         }
+        $iconHtml = Html::tag('div', $iconHtml, ['class' => ['nav-icon']]);
         if (empty($items)) {
             $subMenu = '';
             $showSubmenu = '';
         } else {
-            Html::addCssClass($options, ['has-treeview']);
-            $showSubmenu = Icon::show('angle-left', ['class' => 'nav-treeview-status-icon']);
+            $showSubmenu = Icon::show('angle-right', ['class' => 'nav-arrow']);
 
             $dropdownOptions = ArrayHelper::getValue($item, 'dropdownOptions', []);
             Html::addCssClass($dropdownOptions, ['nav-treeview']);

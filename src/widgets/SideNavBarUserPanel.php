@@ -5,8 +5,8 @@ namespace WolfpackIT\adminLte\widgets;
 use kartik\icons\Icon;
 use WolfpackIT\adminLte\bundles\AdminLteBundle;
 use yii\base\InvalidConfigException;
-use yii\bootstrap4\Html;
-use yii\bootstrap4\Widget;
+use yii\bootstrap5\Html;
+use yii\bootstrap5\Widget;
 
 /**
  * Class UserPanel
