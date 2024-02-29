@@ -101,6 +101,13 @@ class SideNavBar extends Widget
      */
     public $clientOptions = false;
 
+    /**
+     * @var array the HTML attributes for the wrapper tag.
+     *
+     * @see \yii\helpers\Html::renderTagAttributes() for details on how attributes are being rendered.
+     */
+    public array $wrapperOptions = [];
+
 
     /**
      * Initializes the widget.
@@ -142,7 +149,9 @@ class SideNavBar extends Widget
 
         echo Html::beginTag($navTag, $navOptions) . "\n";
         echo Html::tag('div', $brand, ['class' => ['sidebar-brand']]) . "\n";
-        echo Html::beginTag('div', ['class' => ['sidebar-wrapper']]) . "\n";
+        $wrapperOptions = $this->wrapperOptions;
+        Html::addCssClass($wrapperOptions, 'sidebar-wrapper');
+        echo Html::beginTag('div', $wrapperOptions) . "\n";
     }
 
     /**
